@@ -1,12 +1,19 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import Main from './src/Components/Main';
+
+const PressableText = props => {
+  return(
+    <Pressable onPress={() => Alert.alert('you press the text')}>
+      <Text> You can press me</Text>
+    </Pressable>
+  )
+}
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Main/>
   );
 }
 
