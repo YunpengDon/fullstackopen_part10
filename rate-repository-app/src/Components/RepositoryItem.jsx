@@ -24,7 +24,7 @@ const RepositoryItem = ({item}) => {
       Stars: {item.stargazersCount}
       {'\n'}
       Forks: {item.forksCount}
-      {'\n'}
+      {'\n'}f
       Reviews: {item.reviewCount}
       {'\n'}
       Rating: {item.ratingAverage}
