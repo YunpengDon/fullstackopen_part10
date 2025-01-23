@@ -5,6 +5,7 @@ import theme from "../theme";
 const styles = StyleSheet.create({
   flexContainer: {
     display: "flex",
+    backgroundColor: "#FFFFFF",
   },
   innerFlexContainer: {
     display: "flex",
@@ -47,7 +48,9 @@ const InteractionCount = ({ name, count }) => {
       : String(count);
   return (
     <View style={{ alignItems: "center" }}>
-      <Text fontWeight="bold" style={styles.infoText}>{countDisplayString}</Text>
+      <Text fontWeight="bold" style={styles.infoText}>
+        {countDisplayString}
+      </Text>
       <Text color="textSecondary">{name}</Text>
     </View>
   );
