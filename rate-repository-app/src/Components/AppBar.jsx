@@ -7,14 +7,21 @@ const styles = StyleSheet.create({
     paddingTop: Constants.statusBarHeight,
     padding: 24,
     backgroundColor: "#24292e",
-  }
+  },
 });
 
 const AppBar = () => {
   return (
     <View style={styles.container}>
-      <Pressable >
-      <Text fontSize='subheading' fontWeight='bold'>Repositories</Text></Pressable>
+      <Pressable>
+        <Text
+          fontSize="subheading"
+          fontWeight="bold"
+          style={{ color: "#F0FFFF" }}
+        >
+          Repositories
+        </Text>
+      </Pressable>
     </View>
   );
 };

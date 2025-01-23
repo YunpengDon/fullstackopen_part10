@@ -8,6 +8,7 @@ const sytles = StyleSheet.create({
     fontSize: theme.fontSizes.body,
     fontFamily: theme.fonts.main,
     fontWeight: theme.fontWeights.normal,
+    flexWrap: "wrap",
   },
   colorTextSecondary: {
     color: theme.colors.textSecondary,
@@ -19,21 +20,21 @@ const sytles = StyleSheet.create({
     fontSize: theme.fontSizes.subheading,
   },
   fontWeightBold: {
-    fontWeight: theme.fontWeights.bold
-  }
+    fontWeight: theme.fontWeights.bold,
+  },
 });
 
-const Text = ({ color, fontSize, fontWeight, style, ...props}) => {
+const Text = ({ color, fontSize, fontWeight, style, ...props }) => {
   const textStyle = [
     sytles.text,
-    color === 'textSecondary' && sytles.colorTextSecondary,
-    color === 'primary' && sytles.colorPrimary,
-    fontSize === 'subheading' && sytles.fontSizeSubheading,
-    fontWeight === 'bold' && sytles.fontWeightBold,
+    color === "textSecondary" && sytles.colorTextSecondary,
+    color === "primary" && sytles.colorPrimary,
+    fontSize === "subheading" && sytles.fontSizeSubheading,
+    fontWeight === "bold" && sytles.fontWeightBold,
     style,
-  ]
+  ];
 
-  return <NativeText style={textStyle} {...props}/>
-}
+  return <NativeText style={textStyle} {...props} />;
+};
 
 export default Text;

@@ -1,19 +1,19 @@
 const theme = {
   colors: {
-    textPrimary: '#F0FFFF',
-    textSecondary: '#586069',
-    primary: '#0366d6',
+    textPrimary: "#000000",
+    textSecondary: "#586069",
+    primary: "#0366d6",
   },
   fontSizes: {
-    body: 14,
-    subheading: 16,
+    body: 16,
+    subheading: 24,
   },
   fonts: {
-    main: 'System',
+    main: "System",
   },
   fontWeights: {
-    normal: '400',
-    bold: '700',
+    normal: "400",
+    bold: "700",
   },
 };
 

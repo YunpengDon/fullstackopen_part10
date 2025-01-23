@@ -14,7 +14,7 @@ const sytles = StyleSheet.create({
 const Main = () => {
   return (
     <View style={sytles.container}>
-      <AppBar/>
+      <AppBar />
       <RepositoryList />
     </View>
   );
