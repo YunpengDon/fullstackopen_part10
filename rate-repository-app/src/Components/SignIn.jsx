@@ -64,7 +64,7 @@ const SignInForm = ({ onSubmit }) => {
         placeholder="Username"
         value={formik.values.userName}
         onChangeText={formik.handleChange("userName")}
-        error={formik.errors.userName}
+        error={formik.touched.userName && formik.errors.userName}
       />
       {formik.touched.userName && formik.errors.userName && (
         <Text style={styles.errorText}>{formik.errors.userName}</Text>
@@ -74,7 +74,7 @@ const SignInForm = ({ onSubmit }) => {
         secureTextEntry
         value={formik.values.password}
         onChangeText={formik.handleChange("password")}
-        error={formik.errors.password}
+        error={formik.touched.password && formik.errors.password}
       />
       {formik.touched.password && formik.errors.password && (
         <Text style={styles.errorText}>{formik.errors.password}</Text>
