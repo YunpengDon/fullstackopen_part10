@@ -3,6 +3,7 @@ const theme = {
     textPrimary: "#000000",
     textSecondary: "#586069",
     primary: "#0366d6",
+    error: "#d73a4a",
   },
   fontSizes: {
     body: 16,

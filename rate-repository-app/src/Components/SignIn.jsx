@@ -1,5 +1,6 @@
 import { TextInput, View, Pressable, StyleSheet } from "react-native";
 import { useFormik } from "formik";
+import * as yup from "yup";
 import Text from "./Text";
 import theme from "../theme";
 
@@ -7,6 +8,11 @@ const initialValues = {
   userName: "",
   password: "",
 };
+
+const validationSchema = yup.object().shape({
+  userName: yup.string().required("Username is required"),
+  password: yup.string().required("Password is required"),
+});
 
 const styles = StyleSheet.create({
   input: {
@@ -16,6 +22,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 12,
     borderColor: "#A9A9A9",
+  },
+  errorInput: {
+    borderColor: theme.colors.error,
   },
   flexContainer: {
     display: "flex",
@@ -31,28 +40,45 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFFFFF",
   },
+  errorText: {
+    color: theme.colors.error,
+    marginHorizontal: 12,
+  },
 });
+
+const SignInInput = ({ error, ...props }) => {
+  const inputSytles = [styles.input, error && styles.errorInput];
+  return <TextInput style={inputSytles} {...props} />;
+};
 
 const SignInForm = ({ onSubmit }) => {
   const formik = useFormik({
     initialValues,
+    validationSchema,
     onSubmit,
   });
+
   return (
     <View style={styles.flexContainer}>
-      <TextInput
+      <SignInInput
         placeholder="Username"
         value={formik.values.userName}
         onChangeText={formik.handleChange("userName")}
-        style={styles.input}
+        error={formik.errors.userName}
       />
-      <TextInput
+      {formik.touched.userName && formik.errors.userName && (
+        <Text style={styles.errorText}>{formik.errors.userName}</Text>
+      )}
+      <SignInInput
         placeholder="Password"
         secureTextEntry
         value={formik.values.password}
         onChangeText={formik.handleChange("password")}
-        style={styles.input}
+        error={formik.errors.password}
       />
+      {formik.touched.password && formik.errors.password && (
+        <Text style={styles.errorText}>{formik.errors.password}</Text>
+      )}
       <Pressable onPress={formik.handleSubmit} style={styles.buttonStyle}>
         <Text fontWeight="bold" style={styles.buttonText}>
           Sign in
@@ -65,9 +91,8 @@ const SignInForm = ({ onSubmit }) => {
 const SignIn = () => {
   const onSubmit = (values) => {
     console.log(values);
-    
-  }
-  return <SignInForm onSubmit={onSubmit}/>
-}
+  };
+  return <SignInForm onSubmit={onSubmit} />;
+};
 
-export default SignIn
+export default SignIn;
