@@ -61,22 +61,23 @@ const styles = StyleSheet.create({
 const ItemSeparator = () => <View style={styles.separator} />;
 
 const RepositoryList = () => {
-  
-  const { data, error, loading} = useQuery(GET_REPOSITORIES)
+  const { data, error, loading } = useQuery(GET_REPOSITORIES, {
+    fetchPolicy: "cache-and-network",
+  });
 
   if (loading) {
-    return <Text>Loading...</Text>
+    return <Text>Loading...</Text>;
   }
 
   if (error) {
-    return <Text>Error: {error}</Text>
+    return <Text>Error: {error}</Text>;
   }
   if (data) {
     // Get the nodes from the edges array
     const repositoryNodes = data.repositories
-      ? data.repositories.edges.map(edge => edge.node)
+      ? data.repositories.edges.map((edge) => edge.node)
       : [];
-  
+
     return (
       <FlatList
         data={repositoryNodes}
@@ -84,9 +85,7 @@ const RepositoryList = () => {
         renderItem={({ item }) => <RepositoryItem item={item} />}
       />
     );
-    
   }
-
 };
 
 export default RepositoryList;
