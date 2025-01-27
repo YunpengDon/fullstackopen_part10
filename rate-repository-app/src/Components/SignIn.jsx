@@ -2,15 +2,16 @@ import { TextInput, View, Pressable, StyleSheet } from "react-native";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import Text from "./Text";
+import useSignIn from "../hooks/useSignIn";
 import theme from "../theme";
 
 const initialValues = {
-  userName: "",
+  username: "",
   password: "",
 };
 
 const validationSchema = yup.object().shape({
-  userName: yup.string().required("Username is required"),
+  username: yup.string().required("Username is required"),
   password: yup.string().required("Password is required"),
 });
 
@@ -62,12 +63,12 @@ const SignInForm = ({ onSubmit }) => {
     <View style={styles.flexContainer}>
       <SignInInput
         placeholder="Username"
-        value={formik.values.userName}
-        onChangeText={formik.handleChange("userName")}
-        error={formik.touched.userName && formik.errors.userName}
+        value={formik.values.username}
+        onChangeText={formik.handleChange("username")}
+        error={formik.touched.username && formik.errors.username}
       />
-      {formik.touched.userName && formik.errors.userName && (
-        <Text style={styles.errorText}>{formik.errors.userName}</Text>
+      {formik.touched.username && formik.errors.username && (
+        <Text style={styles.errorText}>{formik.errors.username}</Text>
       )}
       <SignInInput
         placeholder="Password"
@@ -89,8 +90,16 @@ const SignInForm = ({ onSubmit }) => {
 };
 
 const SignIn = () => {
-  const onSubmit = (values) => {
-    console.log(values);
+  const [signIn] = useSignIn();
+  const onSubmit = async (values) => {
+    const { username, password } = values;
+
+    try {
+      const { data } = await signIn({ username, password });
+      console.log(data);
+    } catch (e) {
+      console.log(e);
+    }
   };
   return <SignInForm onSubmit={onSubmit} />;
 };
