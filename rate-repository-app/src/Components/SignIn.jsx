@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import Text from "./Text";
 import useSignIn from "../hooks/useSignIn";
+import AuthStorage from "../utils/authStorage";
 import theme from "../theme";
 
 const initialValues = {
@@ -91,15 +92,23 @@ const SignInForm = ({ onSubmit }) => {
 
 const SignIn = () => {
   const [signIn] = useSignIn();
+  const accessStorage = new AuthStorage()
+  accessStorage.getAccessToken().then(res => console.log('inital token:', res)
+  );
   const onSubmit = async (values) => {
     const { username, password } = values;
 
     try {
       const { data } = await signIn({ username, password });
       console.log(data);
+      await accessStorage.setAccessToken(data)
     } catch (e) {
       console.log(e);
     }
+    const newToken = await accessStorage.getAccessToken();
+    console.log('final token:', newToken);
+    ;
+    
   };
   return <SignInForm onSubmit={onSubmit} />;
 };
