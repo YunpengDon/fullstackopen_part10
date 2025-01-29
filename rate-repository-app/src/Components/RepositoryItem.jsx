@@ -1,6 +1,8 @@
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Pressable } from "react-native";
+import * as Linking from "expo-linking";
 import Text from "./Text";
 import theme from "../theme";
+import { useNavigate } from "react-router-native";
 
 const styles = StyleSheet.create({
   flexContainer: {
@@ -39,6 +41,13 @@ const styles = StyleSheet.create({
     padding: 5,
     marginVertical: 6,
   },
+  primaryButton: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: 5,
+    alignItems: "center",
+    margin: 12,
+    padding: 18,
+  },
 });
 
 const InteractionCount = ({ name, count, testID }) => {
@@ -56,50 +65,70 @@ const InteractionCount = ({ name, count, testID }) => {
   );
 };
 // repository's full name, description, language, number of forks, number of stars, rating average and number of reviews.
-const RepositoryItem = ({ item }) => {
+const RepositoryItem = ({ item, url = false }) => {
+  const navigate = useNavigate();
   return (
-    <View style={styles.flexContainer} testID="repositoryItem">
-      <View style={styles.innerFlexContainer}>
-        <Image style={styles.tinyLogo} src={item.ownerAvatarUrl} />
-        <View style={styles.basicInfoContainer}>
-          <Text fontWeight="bold" style={styles.infoText} testID="fullName">
-            {item.fullName}
-          </Text>
-          <Text
-            color="textSecondary"
-            style={styles.infoText}
-            testID="description"
-          >
-            {item.description}
-          </Text>
-          <Text style={styles.languageTag} testID="language">
-            {item.language}
-          </Text>
+    <Pressable
+      onPress={() => {
+        navigate(`/repository/${item.id}`);
+      }}
+    >
+      <View style={styles.flexContainer} testID="repositoryItem">
+        <View style={styles.innerFlexContainer}>
+          <Image style={styles.tinyLogo} src={item.ownerAvatarUrl} />
+          <View style={styles.basicInfoContainer}>
+            <Text fontWeight="bold" style={styles.infoText} testID="fullName">
+              {item.fullName}
+            </Text>
+            <Text
+              color="textSecondary"
+              style={styles.infoText}
+              testID="description"
+            >
+              {item.description}
+            </Text>
+            <Text style={styles.languageTag} testID="language">
+              {item.language}
+            </Text>
+          </View>
         </View>
+        <View style={styles.interactionCountContainer}>
+          <InteractionCount
+            name="Stars"
+            count={item.stargazersCount}
+            testID="stargazersCount"
+          />
+          <InteractionCount
+            name="Forks"
+            count={item.forksCount}
+            testID="forksCount"
+          />
+          <InteractionCount
+            name="Reviews"
+            count={item.reviewCount}
+            testID="reviewCount"
+          />
+          <InteractionCount
+            name="Rating"
+            count={item.ratingAverage}
+            testID="ratingAverage"
+          />
+        </View>
+        {url ? (
+          <Pressable
+            onPress={() => {
+              Linking.openURL(item.url);
+            }}
+          >
+            <View style={styles.primaryButton}>
+              <Text fontWeight="bold" style={{ color: "white" }}>
+                Open in Github
+              </Text>
+            </View>
+          </Pressable>
+        ) : null}
       </View>
-      <View style={styles.interactionCountContainer}>
-        <InteractionCount
-          name="Stars"
-          count={item.stargazersCount}
-          testID="stargazersCount"
-        />
-        <InteractionCount
-          name="Forks"
-          count={item.forksCount}
-          testID="forksCount"
-        />
-        <InteractionCount
-          name="Reviews"
-          count={item.reviewCount}
-          testID="reviewCount"
-        />
-        <InteractionCount
-          name="Rating"
-          count={item.ratingAverage}
-          testID="ratingAverage"
-        />
-      </View>
-    </View>
+    </Pressable>
   );
 };
 
