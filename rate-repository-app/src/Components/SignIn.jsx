@@ -54,7 +54,7 @@ const SignInInput = ({ error, ...props }) => {
   return <TextInput style={inputSytles} {...props} />;
 };
 
-const SignInForm = ({ onSubmit }) => {
+export const SignInForm = ({ onSubmit }) => {
   const formik = useFormik({
     initialValues,
     validationSchema,
