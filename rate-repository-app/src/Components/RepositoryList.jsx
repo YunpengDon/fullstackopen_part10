@@ -1,8 +1,7 @@
 import { FlatList, View, StyleSheet } from "react-native";
-import { useQuery } from "@apollo/client";
 
-import { GET_REPOSITORIES } from "../graphql/queries";
 import RepositoryItem from "./RepositoryItem";
+import useRepositories from "../hooks/useRepositories";
 import Text from "./Text";
 
 const styles = StyleSheet.create({
@@ -60,10 +59,22 @@ const styles = StyleSheet.create({
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
+export const RepositoryListContainer = ({ repositories }) => {
+  const repositoryNodes = repositories
+    ? repositories.edges.map((edge) => edge.node)
+    : [];
+
+  return (
+    <FlatList
+      data={repositoryNodes}
+      ItemSeparatorComponent={ItemSeparator}
+      renderItem={({ item }) => <RepositoryItem item={item} />}
+    />
+  );
+};
+
 const RepositoryList = () => {
-  const { data, error, loading } = useQuery(GET_REPOSITORIES, {
-    fetchPolicy: "cache-and-network",
-  });
+  const { repositories, error, loading } = useRepositories();
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -72,19 +83,9 @@ const RepositoryList = () => {
   if (error) {
     return <Text>Error: {error}</Text>;
   }
-  if (data) {
+  if (repositories) {
     // Get the nodes from the edges array
-    const repositoryNodes = data.repositories
-      ? data.repositories.edges.map((edge) => edge.node)
-      : [];
-
-    return (
-      <FlatList
-        data={repositoryNodes}
-        ItemSeparatorComponent={ItemSeparator}
-        renderItem={({ item }) => <RepositoryItem item={item} />}
-      />
-    );
+    return <RepositoryListContainer repositories={repositories} />;
   }
 };
 

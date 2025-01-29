@@ -41,14 +41,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const InteractionCount = ({ name, count }) => {
+const InteractionCount = ({ name, count, testID }) => {
   const countDisplayString =
     Number(count) > 1000
       ? (Number(count) / 1000).toFixed(1) + "k"
       : String(count);
   return (
     <View style={{ alignItems: "center" }}>
-      <Text fontWeight="bold" style={styles.infoText}>
+      <Text fontWeight="bold" style={styles.infoText} testID={testID}>
         {countDisplayString}
       </Text>
       <Text color="textSecondary">{name}</Text>
@@ -58,24 +58,46 @@ const InteractionCount = ({ name, count }) => {
 // repository's full name, description, language, number of forks, number of stars, rating average and number of reviews.
 const RepositoryItem = ({ item }) => {
   return (
-    <View style={styles.flexContainer}>
+    <View style={styles.flexContainer} testID="repositoryItem">
       <View style={styles.innerFlexContainer}>
         <Image style={styles.tinyLogo} src={item.ownerAvatarUrl} />
         <View style={styles.basicInfoContainer}>
-          <Text fontWeight="bold" style={styles.infoText}>
+          <Text fontWeight="bold" style={styles.infoText} testID="fullName">
             {item.fullName}
           </Text>
-          <Text color="textSecondary" style={styles.infoText}>
+          <Text
+            color="textSecondary"
+            style={styles.infoText}
+            testID="description"
+          >
             {item.description}
           </Text>
-          <Text style={styles.languageTag}>{item.language}</Text>
+          <Text style={styles.languageTag} testID="language">
+            {item.language}
+          </Text>
         </View>
       </View>
       <View style={styles.interactionCountContainer}>
-        <InteractionCount name="Stars" count={item.stargazersCount} />
-        <InteractionCount name="Forks" count={item.forksCount} />
-        <InteractionCount name="Reviews" count={item.reviewCount} />
-        <InteractionCount name="Rating" count={item.ratingAverage} />
+        <InteractionCount
+          name="Stars"
+          count={item.stargazersCount}
+          testID="stargazersCount"
+        />
+        <InteractionCount
+          name="Forks"
+          count={item.forksCount}
+          testID="forksCount"
+        />
+        <InteractionCount
+          name="Reviews"
+          count={item.reviewCount}
+          testID="reviewCount"
+        />
+        <InteractionCount
+          name="Rating"
+          count={item.ratingAverage}
+          testID="ratingAverage"
+        />
       </View>
     </View>
   );
