@@ -4,11 +4,7 @@ import Text from "./Text";
 import theme from "../theme";
 import { useNavigate } from "react-router-native";
 
-const styles = StyleSheet.create({
-  flexContainer: {
-    display: "flex",
-    backgroundColor: "#FFFFFF",
-  },
+export const styles = StyleSheet.create({
   innerFlexContainer: {
     display: "flex",
     flexDirection: "row",
@@ -38,7 +34,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     color: "#FFFFFF",
     borderRadius: 5,
-    padding: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     marginVertical: 6,
   },
   primaryButton: {
@@ -73,8 +70,8 @@ const RepositoryItem = ({ item, url = false }) => {
         navigate(`/repository/${item.id}`);
       }}
     >
-      <View style={styles.flexContainer} testID="repositoryItem">
-        <View style={styles.innerFlexContainer}>
+      <View style={theme.flexContainer} testID="repositoryItem">
+        <View style={theme.innerFlexContainer}>
           <Image style={styles.tinyLogo} src={item.ownerAvatarUrl} />
           <View style={styles.basicInfoContainer}>
             <Text fontWeight="bold" style={styles.infoText} testID="fullName">
@@ -116,7 +113,7 @@ const RepositoryItem = ({ item, url = false }) => {
         </View>
         {url ? (
           <Pressable
-            onPress={() => {
+            onPress={() => {  
               Linking.openURL(item.url);
             }}
           >

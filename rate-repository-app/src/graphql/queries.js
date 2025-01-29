@@ -24,12 +24,53 @@ export const GET_REPOSITORIES = gql`
 
 export const GET_REPOSITORY = gql`
   query Repository($repositoryId: ID!) {
-    repository(id: $repositoryId) {
+    repository: repository(id: $repositoryId) {
       ...BasicRepositoryInfo
       url
     }
+    reviews: repository(id: $repositoryId) {
+      id
+      fullName
+      reviews {
+        edges {
+          node {
+            user {
+              id
+              username
+            }
+            id
+            createdAt
+            rating
+            text
+          }
+        }
+      }
+    }
   }
   ${BASIC_REPOSITORY_INFO}
+`;
+
+export const GET_REVIEW = gql`
+  query Reviews($repositoryId: ID!) {
+    repository(id: $repositoryId) {
+      id
+      fullName
+      reviews {
+        edges {
+          node {
+            user {
+              id
+              username
+            }
+            id
+            createdAt
+            rating
+            text
+          }
+        }
+      }
+    }
+  }
 `;
 
 export const ME = gql`

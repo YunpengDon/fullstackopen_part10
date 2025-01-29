@@ -22,6 +22,14 @@ const theme = {
     normal: "400",
     bold: "700",
   },
+  flexContainer: {
+    display: "flex",
+    backgroundColor: "#FFFFFF",
+  },
+  innerFlexContainer: {
+    display: "flex",
+    flexDirection: "row",
+  },
 };
 
 export default theme;
