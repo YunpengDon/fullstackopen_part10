@@ -3,6 +3,7 @@ import { FlatList, View, StyleSheet } from "react-native";
 import RepositoryItem from "./RepositoryItem";
 import useRepositories from "../hooks/useRepositories";
 import Text from "./Text";
+import LoadingSpinner from "./LoadingSpinner";
 
 const styles = StyleSheet.create({
   separator: {
@@ -77,7 +78,7 @@ const RepositoryList = () => {
   const { repositories, error, loading } = useRepositories();
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingSpinner/>
   }
 
   if (error) {

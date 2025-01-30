@@ -8,6 +8,7 @@ import { GET_REPOSITORY } from "../graphql/queries";
 import theme from "../theme";
 import Text from "./Text";
 import RepositoryItem from "./RepositoryItem";
+import LoadingSpinner from "./LoadingSpinner";
 
 const styles = StyleSheet.create({
   reviewRating: {
@@ -43,7 +44,7 @@ const ReviewItem = ({ review }) => {
   // Single review item
 
   return (
-    <View key={review.id} style={[theme.flexContainer, { marginTop: 10 }]}>
+    <View style={[theme.flexContainer, { marginTop: 10 }]}>
       <View style={theme.innerFlexContainer}>
         <View style={styles.reviewRating}>
           <Text
@@ -78,9 +79,12 @@ const SingleRepository = () => {
     variables: {
       repositoryId: id,
     },
+    onError: (error) => {
+      console.error("Query error:", error);
+    },
   });
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingSpinner />;
   }
 
   if (error) {
@@ -89,13 +93,13 @@ const SingleRepository = () => {
 
   if (!loading && !error && data) {
     const repository = data.repository;
-    const reviews = data.reviews.reviews.edges;
+    const reviews = data?.reviews?.reviews?.edges || [];
 
     return (
       <FlatList
         data={reviews}
         renderItem={({ item }) => <ReviewItem review={item.node} />}
-        keyExtractor={({ id }) => id}
+        keyExtractor={(item) => item.node.id.toString()}
         ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
       />
     );

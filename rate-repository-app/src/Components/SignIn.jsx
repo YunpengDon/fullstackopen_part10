@@ -1,11 +1,11 @@
-import { TextInput, View, Pressable, StyleSheet } from "react-native";
+import { TextInput, View, Pressable, StyleSheet, Alert } from "react-native";
 import { useNavigate } from "react-router-native";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import Text from "./Text";
 import useSignIn from "../hooks/useSignIn";
-import useAuthStorage from "../hooks/useAuthStorage";
 import theme from "../theme";
+import { ApolloError } from "@apollo/client";
 
 const initialValues = {
   username: "",
@@ -19,7 +19,7 @@ const validationSchema = yup.object().shape({
 
 const styles = StyleSheet.create({
   input: {
-    // height: 40,
+    height: 40,
     margin: 12,
     borderWidth: 1,
     borderRadius: 5,
@@ -49,9 +49,26 @@ const styles = StyleSheet.create({
   },
 });
 
-const SignInInput = ({ error, ...props }) => {
+export const SignInInput = ({ error, ...props }) => {
   const inputSytles = [styles.input, error && styles.errorInput];
   return <TextInput style={inputSytles} {...props} />;
+};
+
+export const FormInputField = ({ name, placeholder, formik, ...props }) => {
+  return (
+    <>
+      <SignInInput
+        placeholder={placeholder}
+        value={formik.values[name]}
+        onChangeText={formik.handleChange(name)}
+        error={formik.touched[name] && formik.errors[name]}
+        {...props}
+      />
+      {formik.touched[name] && formik.errors[name] && (
+        <Text style={theme.errorText}>{formik.errors[name]}</Text>
+      )}
+    </>
+  );
 };
 
 export const SignInForm = ({ onSubmit }) => {
@@ -63,25 +80,8 @@ export const SignInForm = ({ onSubmit }) => {
 
   return (
     <View style={styles.flexContainer}>
-      <SignInInput
-        placeholder="Username"
-        value={formik.values.username}
-        onChangeText={formik.handleChange("username")}
-        error={formik.touched.username && formik.errors.username}
-      />
-      {formik.touched.username && formik.errors.username && (
-        <Text style={styles.errorText}>{formik.errors.username}</Text>
-      )}
-      <SignInInput
-        placeholder="Password"
-        secureTextEntry
-        value={formik.values.password}
-        onChangeText={formik.handleChange("password")}
-        error={formik.touched.password && formik.errors.password}
-      />
-      {formik.touched.password && formik.errors.password && (
-        <Text style={styles.errorText}>{formik.errors.password}</Text>
-      )}
+      <FormInputField placeholder="Username" name='username' formik={formik}/>
+      <FormInputField placeholder="Password" name="password" formik={formik} secureTextEntry/>
       <Pressable onPress={formik.handleSubmit} style={styles.buttonStyle}>
         <Text fontWeight="bold" style={styles.buttonText}>
           Sign in
@@ -104,7 +104,14 @@ const SignIn = () => {
         navigate("/", { replace: true });
       }
     } catch (e) {
-      console.log(e);
+      if (e instanceof ApolloError ) {
+        console.log(e.graphQLErrors[0].message);
+        Alert.alert(e.graphQLErrors[0].message, 'please make sure your input is correct')
+      }
+      else {
+        console.log(JSON.stringify(e));
+      }
+      
     }
   };
   return <SignInForm onSubmit={onSubmit} />;

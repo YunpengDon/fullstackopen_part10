@@ -2,9 +2,10 @@ import { View, StyleSheet, Pressable, ScrollView } from "react-native";
 import { useApolloClient } from "@apollo/client";
 import { Link } from "react-router-native";
 import { useQuery } from "@apollo/client";
+import { ME } from "../graphql/queries";
 import { useContext } from "react";
 import AuthStorageContext from "../contexts/AuthStorageContext";
-import { ME } from "../graphql/queries";
+
 import Text from "./Text";
 import Constants from "expo-constants";
 
@@ -43,15 +44,22 @@ const AppBar = () => {
           </Link>
         </Pressable>
         {data && data.me ? (
-          <Link
-            to="/sign-in"
-            underlayColor="transparent"
-            onPress={handleSignOut}
-          >
-            <Text fontWeight="bold" style={styles.tabHeading}>
-              Sign out
-            </Text>
-          </Link>
+          <>
+            <Link to="/create-review" underlayColor="transparent">
+              <Text fontWeight="bold" style={styles.tabHeading}>
+                Create a review
+              </Text>
+            </Link>
+            <Link
+              to="/sign-in"
+              underlayColor="transparent"
+              onPress={handleSignOut}
+            >
+              <Text fontWeight="bold" style={styles.tabHeading}>
+                Sign out
+              </Text>
+            </Link>
+          </>
         ) : (
           <Link to="/sign-in" underlayColor="transparent">
             <Text fontWeight="bold" style={styles.tabHeading}>
