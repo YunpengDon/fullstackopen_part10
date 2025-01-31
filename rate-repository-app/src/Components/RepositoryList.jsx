@@ -1,6 +1,7 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { FlatList, View, StyleSheet } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
+import { Searchbar, MD3LightTheme as DefaultTheme } from "react-native-paper";
 
 import RepositoryItem from "./RepositoryItem";
 import useRepositories from "../hooks/useRepositories";
@@ -14,7 +15,8 @@ const styles = StyleSheet.create({
     height: 10,
   },
   dropdown: {
-    margin: 12,
+    marginHorizontal: 18,
+    marginVertical: 6,
     height: 40,
     borderBottomColor: "gray",
     // borderBottomWidth: 0.5,
@@ -31,6 +33,22 @@ const styles = StyleSheet.create({
   iconStyle: {
     width: 20,
     height: 20,
+  },
+  searchBar: {
+    marginHorizontal: 12,
+    marginTop: 12,
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
+    borderRadius: 10, // 修改圆角
+    height: 48,
+    justifyContent: "center",
+  },
+  searchBarInput: {
+    // margin: 12,
+    lineHeight: 16,
+    padding: 0,
+    height: "100%",
+    alignSelf: "center",
   },
 });
 
@@ -90,31 +108,45 @@ const filterVariables = (filterValue) => {
   switch (filterValue) {
     case "createdAt-descending":
       return {
-          orderBy: "CREATED_AT",
-          orderDirection : "DESC"
-        }
+        orderBy: "CREATED_AT",
+        orderDirection: "DESC",
+      };
     case "rating-descending":
       return {
         orderBy: "RATING_AVERAGE",
-        orderDirection : "DESC"
-      }
-      case "rating-ascending":
-        return {
-          orderBy: "RATING_AVERAGE",
-          orderDirection : "ASC"
-        }
+        orderDirection: "DESC",
+      };
+    case "rating-ascending":
+      return {
+        orderBy: "RATING_AVERAGE",
+        orderDirection: "ASC",
+      };
     default:
-      return {}
-  } 
-}
+      return {};
+  }
+};
 
 export const ItemSeparator = () => <View style={styles.separator} />;
 
+const RepositorySearchBar = () => {
+  const { searchKeyword, setSearchKeyword } = useContext(FilterContext);
+
+  return (
+    <Searchbar
+      placeholder="Search"
+      mode="view"
+      style={styles.searchBar}
+      inputStyle={styles.searchBarInput}
+      onChangeText={setSearchKeyword}
+      showDivider={false}
+      elevation={1}
+      value={searchKeyword}
+    />
+  );
+};
+
 const RepositoryFilterDropdown = () => {
   const { selectedFilter, setSelectedFilter } = useContext(FilterContext);
-  useEffect(() => {
-    console.log("selectedFilter: ", selectedFilter);
-  }, [selectedFilter]);
   return (
     <Dropdown
       data={filter}
@@ -131,47 +163,76 @@ const RepositoryFilterDropdown = () => {
       onChange={(item) => {
         setSelectedFilter(item.value);
       }}
-      // backgroundColor='#d1d9e099'
     />
   );
 };
 
-export const RepositoryListContainer = ({ repositories }) => {
+export const RepositoryListContainer = ({ repositories, loading, error }) => {
   const repositoryNodes = repositories
     ? repositories.edges.map((edge) => edge.node)
     : [];
+
+  const ListEmptyComponent = ({ loading, error }) => {
+    if (loading) {
+      return <LoadingSpinner />;
+    }
+
+    if (error) {
+      return <Text>Error: {error}</Text>;
+    }
+  };
+
+  const renderHeader = useCallback(() => {
+    return (
+      <>
+        <RepositorySearchBar />
+        <RepositoryFilterDropdown />
+      </>
+    );
+  }, []);
 
   return (
     <FlatList
       data={repositoryNodes}
       ItemSeparatorComponent={ItemSeparator}
       renderItem={({ item }) => <RepositoryItem item={item} />}
-      ListHeaderComponent={<RepositoryFilterDropdown />}
+      ListHeaderComponent={renderHeader}
+      ListEmptyComponent={
+        <ListEmptyComponent loading={loading} error={error} />
+      }
     />
   );
 };
 
 const RepositoryList = () => {
   const [selectedFilter, setSelectedFilter] = useState("createdAt-descending");
+  const [searchKeyword, setSearchKeyword] = useState("");
 
-  const { repositories, error, loading, refetch} = useRepositories(filterVariables(selectedFilter));
+  const { repositories, error, loading, refetch } = useRepositories({
+    ...filterVariables(selectedFilter),
+    searchKeyword,
+  });
 
   useEffect(() => {
-    refetch(filterVariables(selectedFilter))
-  }, [selectedFilter])
-  
-  if (loading) {
-    return <LoadingSpinner />;
-  }
+    refetch({ ...filterVariables(selectedFilter), searchKeyword });
+  }, [selectedFilter, searchKeyword]);
 
-  if (error) {
-    return <Text>Error: {error}</Text>;
-  }
   if (repositories) {
     // Get the nodes from the edges array
     return (
-      <FilterContext.Provider value={{ selectedFilter, setSelectedFilter }}>
-        <RepositoryListContainer repositories={repositories} />
+      <FilterContext.Provider
+        value={{
+          selectedFilter,
+          setSelectedFilter,
+          searchKeyword,
+          setSearchKeyword,
+        }}
+      >
+        <RepositoryListContainer
+          repositories={repositories}
+          loading={loading}
+          error={error}
+        />
       </FilterContext.Provider>
     );
   }

@@ -62,16 +62,16 @@ const AppBar = () => {
           </>
         ) : (
           <>
-          <Link to="/sign-in" underlayColor="transparent">
-            <Text fontWeight="bold" style={styles.tabHeading}>
-              Sign in
-            </Text>
-          </Link>
-          <Link to="/sign-up" underlayColor="transparent">
-            <Text fontWeight="bold" style={styles.tabHeading}>
-              Sign up
-            </Text>
-          </Link>
+            <Link to="/sign-in" underlayColor="transparent">
+              <Text fontWeight="bold" style={styles.tabHeading}>
+                Sign in
+              </Text>
+            </Link>
+            <Link to="/sign-up" underlayColor="transparent">
+              <Text fontWeight="bold" style={styles.tabHeading}>
+                Sign up
+              </Text>
+            </Link>
           </>
         )}
       </ScrollView>
