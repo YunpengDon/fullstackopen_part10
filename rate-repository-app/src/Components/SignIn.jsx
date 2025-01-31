@@ -80,8 +80,13 @@ export const SignInForm = ({ onSubmit }) => {
 
   return (
     <View style={styles.flexContainer}>
-      <FormInputField placeholder="Username" name='username' formik={formik}/>
-      <FormInputField placeholder="Password" name="password" formik={formik} secureTextEntry/>
+      <FormInputField placeholder="Username" name="username" formik={formik} />
+      <FormInputField
+        placeholder="Password"
+        name="password"
+        formik={formik}
+        secureTextEntry
+      />
       <Pressable onPress={formik.handleSubmit} style={styles.buttonStyle}>
         <Text fontWeight="bold" style={styles.buttonText}>
           Sign in
@@ -104,14 +109,15 @@ const SignIn = () => {
         navigate("/", { replace: true });
       }
     } catch (e) {
-      if (e instanceof ApolloError ) {
+      if (e instanceof ApolloError) {
         console.log(e.graphQLErrors[0].message);
-        Alert.alert(e.graphQLErrors[0].message, 'please make sure your input is correct')
-      }
-      else {
+        Alert.alert(
+          e.graphQLErrors[0].message,
+          "please make sure your input is correct"
+        );
+      } else {
         console.log(JSON.stringify(e));
       }
-      
     }
   };
   return <SignInForm onSubmit={onSubmit} />;
