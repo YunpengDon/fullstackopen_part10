@@ -46,6 +46,30 @@ const theme = {
     color: colors.error,
     marginHorizontal: 12,
   },
+  review: {
+    reviewRating: {
+      borderColor: colors.primary,
+      borderWidth: 2,
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      margin: 12,
+      alignSelf: "flex-start",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    reviewRatingText: {
+      color: colors.primary,
+    },
+    reviewInfo: {
+      marginVertical: 12,
+      marginRight: 12,
+      flexShrink: 1,
+    },
+    reviewCreatedAtText: {
+      marginVertical: 6,
+    },
+  },
 };
 
 export default theme;

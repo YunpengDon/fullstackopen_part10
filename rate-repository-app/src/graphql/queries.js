@@ -82,10 +82,26 @@ export const GET_REVIEW = gql`
 `;
 
 export const ME = gql`
-  query Me {
+  query Me($includeReviews: Boolean = false) {
     me {
       username
       id
+      reviews @include(if: $includeReviews) {
+        edges {
+          node {
+            id
+            repository {
+              id
+              fullName
+            }
+            userId
+            repositoryId
+            rating
+            createdAt
+            text
+          }
+        }
+      }
     }
   }
 `;

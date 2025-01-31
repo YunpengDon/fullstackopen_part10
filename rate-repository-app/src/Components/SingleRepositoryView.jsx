@@ -46,22 +46,22 @@ const ReviewItem = ({ review }) => {
   return (
     <View style={[theme.flexContainer, { marginTop: 10 }]}>
       <View style={theme.innerFlexContainer}>
-        <View style={styles.reviewRating}>
+        <View style={theme.review.reviewRating}>
           <Text
             fontWeight="bold"
-            style={styles.reviewRatingText}
+            style={theme.review.reviewRatingText}
             testID="reviewRating"
           >
             {review.rating}
           </Text>
         </View>
-        <View style={styles.reviewInfo}>
+        <View style={theme.review.reviewInfo}>
           <Text fontWeight="bold" testID="reviewUsername">
             {review.user.username}
           </Text>
           <Text
             color="textSecondary"
-            style={styles.reviewCreatedAtText}
+            style={theme.review.reviewCreatedAtText}
             testID="reviewCreatedAt"
           >
             {format(new Date(review.createdAt), "MM.dd.yyyy")}

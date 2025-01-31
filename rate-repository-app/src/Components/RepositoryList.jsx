@@ -142,6 +142,7 @@ const RepositorySearchBar = () => {
       showDivider={false}
       elevation={1}
       value={searchKeyword}
+      placeholderTextColor="grey"
     />
   );
 };

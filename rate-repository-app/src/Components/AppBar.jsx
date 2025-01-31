@@ -50,6 +50,11 @@ const AppBar = () => {
                 Create a review
               </Text>
             </Link>
+            <Link to="/my-reviews" underlayColor="transparent">
+              <Text fontWeight="bold" style={styles.tabHeading}>
+                My reviews
+              </Text>
+            </Link>
             <Link
               to="/sign-in"
               underlayColor="transparent"

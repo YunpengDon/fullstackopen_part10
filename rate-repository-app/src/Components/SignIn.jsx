@@ -62,6 +62,7 @@ export const FormInputField = ({ name, placeholder, formik, ...props }) => {
         value={formik.values[name]}
         onChangeText={formik.handleChange(name)}
         error={formik.touched[name] && formik.errors[name]}
+        placeholderTextColor="grey" 
         {...props}
       />
       {formik.touched[name] && formik.errors[name] && (
