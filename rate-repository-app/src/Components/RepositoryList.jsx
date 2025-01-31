@@ -1,13 +1,36 @@
+import { useState, useEffect, useContext } from "react";
 import { FlatList, View, StyleSheet } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 
 import RepositoryItem from "./RepositoryItem";
 import useRepositories from "../hooks/useRepositories";
 import Text from "./Text";
 import LoadingSpinner from "./LoadingSpinner";
 
+import FilterContext from "../contexts/FilterContext";
+
 const styles = StyleSheet.create({
   separator: {
     height: 10,
+  },
+  dropdown: {
+    margin: 12,
+    height: 40,
+    borderBottomColor: "gray",
+    // borderBottomWidth: 0.5,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
   },
 });
 
@@ -57,8 +80,61 @@ const styles = StyleSheet.create({
 //     ownerAvatarUrl: "https://avatars3.githubusercontent.com/u/13142323?v=4",
 //   },
 // ];
+const filter = [
+  { label: "Latest repositories", value: "createdAt-descending" },
+  { label: "Highest rated repositories", value: "rating-descending" },
+  { label: "Lowest rated repositories", value: "rating-ascending" },
+];
+
+const filterVariables = (filterValue) => {
+  switch (filterValue) {
+    case "createdAt-descending":
+      return {
+          orderBy: "CREATED_AT",
+          orderDirection : "DESC"
+        }
+    case "rating-descending":
+      return {
+        orderBy: "RATING_AVERAGE",
+        orderDirection : "DESC"
+      }
+      case "rating-ascending":
+        return {
+          orderBy: "RATING_AVERAGE",
+          orderDirection : "ASC"
+        }
+    default:
+      return {}
+  } 
+}
 
 export const ItemSeparator = () => <View style={styles.separator} />;
+
+const RepositoryFilterDropdown = () => {
+  const { selectedFilter, setSelectedFilter } = useContext(FilterContext);
+  useEffect(() => {
+    console.log("selectedFilter: ", selectedFilter);
+  }, [selectedFilter]);
+  return (
+    <Dropdown
+      data={filter}
+      value={selectedFilter}
+      style={styles.dropdown}
+      placeholderStyle={styles.placeholderStyle}
+      selectedTextStyle={styles.selectedTextStyle}
+      inputSearchStyle={styles.inputSearchStyle}
+      iconStyle={styles.iconStyle}
+      maxHeight={300}
+      labelField="label"
+      valueField="value"
+      placeholder="Select item"
+      onChange={(item) => {
+        setSelectedFilter(item.value);
+      }}
+      // backgroundColor='#d1d9e099'
+    />
+  );
+};
 
 export const RepositoryListContainer = ({ repositories }) => {
   const repositoryNodes = repositories
@@ -70,15 +146,22 @@ export const RepositoryListContainer = ({ repositories }) => {
       data={repositoryNodes}
       ItemSeparatorComponent={ItemSeparator}
       renderItem={({ item }) => <RepositoryItem item={item} />}
+      ListHeaderComponent={<RepositoryFilterDropdown />}
     />
   );
 };
 
 const RepositoryList = () => {
-  const { repositories, error, loading } = useRepositories();
+  const [selectedFilter, setSelectedFilter] = useState("createdAt-descending");
 
+  const { repositories, error, loading, refetch} = useRepositories(filterVariables(selectedFilter));
+
+  useEffect(() => {
+    refetch(filterVariables(selectedFilter))
+  }, [selectedFilter])
+  
   if (loading) {
-    return <LoadingSpinner/>
+    return <LoadingSpinner />;
   }
 
   if (error) {
@@ -86,7 +169,11 @@ const RepositoryList = () => {
   }
   if (repositories) {
     // Get the nodes from the edges array
-    return <RepositoryListContainer repositories={repositories} />;
+    return (
+      <FilterContext.Provider value={{ selectedFilter, setSelectedFilter }}>
+        <RepositoryListContainer repositories={repositories} />
+      </FilterContext.Provider>
+    );
   }
 };
 
