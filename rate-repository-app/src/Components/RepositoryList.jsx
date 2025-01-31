@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext, useCallback } from "react";
 import { FlatList, View, StyleSheet } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { Searchbar, MD3LightTheme as DefaultTheme } from "react-native-paper";
+import { Searchbar } from "react-native-paper";
+import { useDebouncedCallback } from "use-debounce";
 
 import RepositoryItem from "./RepositoryItem";
 import useRepositories from "../hooks/useRepositories";
@@ -213,8 +214,12 @@ const RepositoryList = () => {
     searchKeyword,
   });
 
-  useEffect(() => {
+  const debouncedRefetch = useDebouncedCallback(() => {
     refetch({ ...filterVariables(selectedFilter), searchKeyword });
+  }, 300);
+
+  useEffect(() => {
+    debouncedRefetch();
   }, [selectedFilter, searchKeyword]);
 
   if (repositories) {
