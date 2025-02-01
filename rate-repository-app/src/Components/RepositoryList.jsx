@@ -223,6 +223,10 @@ const RepositoryList = () => {
     debouncedRefetch();
   }, [selectedFilter, searchKeyword]);
 
+  if (loading && !repositories) {
+    return <LoadingSpinner />;
+  }
+
   if (repositories) {
     // Get the nodes from the edges array
     return (

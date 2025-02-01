@@ -1,9 +1,12 @@
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet, Pressable, Alert } from "react-native";
+import { useNavigate } from "react-router-native";
 import { format } from "date-fns";
 import Text from "./Text";
 import theme from "../theme";
 import useMyReviews from "../hooks/useMyReviews";
 import LoadingSpinner from "./LoadingSpinner";
+import useDeleteReview from "../hooks/useDeleteReview";
+import { ApolloError } from "@apollo/client";
 
 const styles = StyleSheet.create({
   flatListContent: {
@@ -16,11 +19,53 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  innerInfoButton: {
+    ...theme.buttonStyle,
+    flex: 1,
+    marginTop: 0,
+  },
+  innerAltertButton: {
+    ...theme.buttonStyle,
+    backgroundColor: "firebrick",
+    marginLeft: 0,
+    marginTop: 0,
+    flex: 1,
+  },
 });
 
-const ReviewItem = ({ review }) => {
+const ReviewItem = ({ review, refetch }) => {
+  const navigate = useNavigate();
+  const [deleteReview] = useDeleteReview();
   // Single review item
 
+  const deleteReviewHandler = (id) => {
+    console.log("delete:", id);
+    Alert.alert(
+      "Delete review",
+      "Are you sure you want to delete this review?",
+      [
+        {
+          text: "CANCEL",
+          onPress: () => console.log("Cancel delete"),
+        },
+        {
+          text: "DELETE",
+          onPress: async () => {
+            try {
+              await deleteReview(id)
+              refetch();
+            } catch (e) {
+              if (e instanceof ApolloError) {
+                Alert.alert(e.graphQLErrors[0].message);
+              } else {
+                console.log("Error:",e);
+              }
+            }
+          },
+        },
+      ]
+    );
+  };
   return (
     <View style={[theme.flexContainer, { marginTop: 10 }]}>
       <View style={theme.innerFlexContainer}>
@@ -47,11 +92,31 @@ const ReviewItem = ({ review }) => {
           <Text testID="reviewText">{review.text}</Text>
         </View>
       </View>
+      <View
+        style={[theme.innerFlexContainer, { alignContent: "space-between" }]}
+      >
+        <Pressable
+          onPress={() => navigate(`/repository/${review.repository.id}`)}
+          style={styles.innerInfoButton}
+        >
+          <Text fontWeight="bold" style={theme.buttonText}>
+            View repository
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => deleteReviewHandler(review.id)}
+          style={styles.innerAltertButton}
+        >
+          <Text fontWeight="bold" style={theme.buttonText}>
+            Delete review
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 };
 
-const MyReviewsContainer = ({ reviews, loading, error }) => {
+const MyReviewsContainer = ({ reviews, loading, error, refetch }) => {
   const ListEmptyComponent = ({ loading, error }) => {
     if (loading) {
       return <LoadingSpinner />;
@@ -71,7 +136,7 @@ const MyReviewsContainer = ({ reviews, loading, error }) => {
   return (
     <FlatList
       data={reviews}
-      renderItem={({ item }) => <ReviewItem review={item.node} />}
+      renderItem={({ item }) => <ReviewItem review={item.node} refetch={refetch}/>}
       keyExtractor={(item) => item.node.id.toString()}
       ListEmptyComponent={
         <ListEmptyComponent loading={loading} error={error} />
@@ -82,9 +147,14 @@ const MyReviewsContainer = ({ reviews, loading, error }) => {
 };
 
 const MyReviews = () => {
-  const { myReviews, loading, error } = useMyReviews();
+  const { myReviews, loading, error, refetch } = useMyReviews();
   return (
-    <MyReviewsContainer reviews={myReviews} loading={loading} error={error} />
+    <MyReviewsContainer
+      reviews={myReviews}
+      loading={loading}
+      error={error}
+      refetch={refetch}
+    />
   );
 };
 

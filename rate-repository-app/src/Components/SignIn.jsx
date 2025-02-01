@@ -88,8 +88,8 @@ export const SignInForm = ({ onSubmit }) => {
         formik={formik}
         secureTextEntry
       />
-      <Pressable onPress={formik.handleSubmit} style={styles.buttonStyle}>
-        <Text fontWeight="bold" style={styles.buttonText}>
+      <Pressable onPress={formik.handleSubmit} style={theme.buttonStyle}>
+        <Text fontWeight="bold" style={theme.buttonText}>
           Sign in
         </Text>
       </Pressable>
