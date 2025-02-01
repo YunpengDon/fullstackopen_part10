@@ -16,3 +16,12 @@ export const BASIC_REPOSITORY_INFO = gql`
     ownerAvatarUrl
   }
 `;
+
+export const PAGE_INFO = gql`
+  fragment PageInfoFragment on PageInfo {
+    hasPreviousPage
+    hasNextPage
+    startCursor
+    endCursor
+  }
+`;

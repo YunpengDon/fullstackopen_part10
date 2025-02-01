@@ -1,16 +1,20 @@
 import { gql } from "@apollo/client";
-import { BASIC_REPOSITORY_INFO } from "./fragments";
+import { BASIC_REPOSITORY_INFO, PAGE_INFO } from "./fragments";
 
 export const GET_REPOSITORIES = gql`
   query Repositories(
     $orderDirection: OrderDirection
     $orderBy: AllRepositoriesOrderBy
     $searchKeyword: String
+    $after: String
+    $first: Int
   ) {
     repositories(
       orderDirection: $orderDirection
       orderBy: $orderBy
       searchKeyword: $searchKeyword
+      after: $after
+      first: $first
     ) {
       edges {
         node {
@@ -18,20 +22,18 @@ export const GET_REPOSITORIES = gql`
         }
         cursor
       }
-      totalCount
       pageInfo {
-        hasPreviousPage
-        hasNextPage
-        startCursor
-        endCursor
+        ...PageInfoFragment
       }
+      totalCount
     }
   }
   ${BASIC_REPOSITORY_INFO}
+  ${PAGE_INFO}
 `;
 
 export const GET_REPOSITORY = gql`
-  query Repository($repositoryId: ID!) {
+  query Repository($repositoryId: ID!, $first: Int, $after: String) {
     repository: repository(id: $repositoryId) {
       ...BasicRepositoryInfo
       url
@@ -39,7 +41,7 @@ export const GET_REPOSITORY = gql`
     reviews: repository(id: $repositoryId) {
       id
       fullName
-      reviews {
+      reviews(first: $first, after: $after) {
         edges {
           node {
             user {
@@ -52,10 +54,14 @@ export const GET_REPOSITORY = gql`
             text
           }
         }
+        pageInfo {
+          ...PageInfoFragment
+        }
       }
     }
   }
   ${BASIC_REPOSITORY_INFO}
+  ${PAGE_INFO}
 `;
 
 export const GET_REVIEW = gql`
@@ -82,26 +88,30 @@ export const GET_REVIEW = gql`
 `;
 
 export const ME = gql`
-  query Me($includeReviews: Boolean = false) {
+  query Me($includeReviews: Boolean = false, $first: Int, $after: String) {
     me {
       username
       id
-      reviews @include(if: $includeReviews) {
+      reviews(first: $first, after: $after) @include(if: $includeReviews) {
+        pageInfo {
+          ...PageInfoFragment
+        }
         edges {
+          cursor
           node {
+            createdAt
             id
+            rating
             repository {
               id
               fullName
             }
-            userId
             repositoryId
-            rating
-            createdAt
             text
           }
         }
       }
     }
   }
+  ${PAGE_INFO}
 `;

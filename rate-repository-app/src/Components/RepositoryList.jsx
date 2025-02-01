@@ -169,7 +169,12 @@ const RepositoryFilterDropdown = () => {
   );
 };
 
-export const RepositoryListContainer = ({ repositories, loading, error }) => {
+export const RepositoryListContainer = ({
+  repositories,
+  loading,
+  error,
+  onEndReach,
+}) => {
   const repositoryNodes = repositories
     ? repositories.edges.map((edge) => edge.node)
     : [];
@@ -202,6 +207,8 @@ export const RepositoryListContainer = ({ repositories, loading, error }) => {
       ListEmptyComponent={
         <ListEmptyComponent loading={loading} error={error} />
       }
+      onEndReached={onEndReach}
+      // onEndReachedThreshold={0.3}
     />
   );
 };
@@ -210,8 +217,9 @@ const RepositoryList = () => {
   const [selectedFilter, setSelectedFilter] = useState("createdAt-descending");
   const [searchKeyword, setSearchKeyword] = useState("");
 
-  const { repositories, error, loading, refetch } = useRepositories({
+  const { repositories, error, loading, refetch, fetchMore } = useRepositories({
     ...filterVariables(selectedFilter),
+    first: 4,
     searchKeyword,
   });
 
@@ -222,6 +230,10 @@ const RepositoryList = () => {
   useEffect(() => {
     debouncedRefetch();
   }, [selectedFilter, searchKeyword]);
+
+  const onEndReach = () => {
+    fetchMore();
+  };
 
   if (loading && !repositories) {
     return <LoadingSpinner />;
@@ -242,6 +254,7 @@ const RepositoryList = () => {
           repositories={repositories}
           loading={loading}
           error={error}
+          onEndReach={onEndReach}
         />
       </FilterContext.Provider>
     );

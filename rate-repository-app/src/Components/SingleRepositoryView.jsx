@@ -75,14 +75,36 @@ const ReviewItem = ({ review }) => {
 
 const SingleRepository = () => {
   const { id } = useParams();
-  const { loading, error, data } = useQuery(GET_REPOSITORY, {
-    variables: {
-      repositoryId: id,
-    },
+  const variables = {
+    repositoryId: id,
+    first: 3,
+  };
+  const { loading, error, data, fetchMore } = useQuery(GET_REPOSITORY, {
+    variables: variables,
     onError: (error) => {
       console.error("Query error:", error);
     },
   });
+
+  const hanleFetchMore = () => {
+    const canFetchMore = !loading && data?.reviews.reviews.pageInfo.hasNextPage;
+
+    if (!canFetchMore) {
+      return;
+    }
+
+    fetchMore({
+      variables: {
+        ...variables,
+        after: data.reviews.reviews.pageInfo.endCursor,
+      },
+    });
+  };
+
+  const onEndReach = () => {
+    hanleFetchMore();
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -101,6 +123,7 @@ const SingleRepository = () => {
         renderItem={({ item }) => <ReviewItem review={item.node} />}
         keyExtractor={(item) => item.node.id.toString()}
         ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
+        onEndReached={onEndReach}
       />
     );
   }
